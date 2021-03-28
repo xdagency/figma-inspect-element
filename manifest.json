@@ -1,0 +1,7 @@
+{
+  "name": "Inspect Metadata",
+  "id": "955869853916822148",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html"
+}

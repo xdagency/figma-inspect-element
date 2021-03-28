@@ -1,0 +1,230 @@
+<!-- Visual UI -->
+
+<!-- TYPE OF SELECTED ELEMENT/NODE -->
+<article class="row type">
+  <p class="label">Type</p>
+  <p class="node_type"><span id="node_type">NONE</span></p>
+</article>
+
+<!-- FIELD TO INPUT A FILTER -->
+<article class="row form includes">
+  <p class="label">Includes</p>
+  <input type="text" name="includes" id="includes" placeholder="anything">
+</article>
+
+<!-- RESULTS FROM SELECTED NODE AND CHILD NODES -->
+<article class="keys" id="container">
+    <section class="row title">
+      <h3>Results</h3>
+      <select name="type" id="">
+        <option value="text">TEXT</option>
+      </select>
+    </section>
+    <section class="table" id="keys"></section>
+</article>
+
+<article id="empty"></article>
+
+<script>
+
+// truncate long copy
+truncateCopy = str => {
+  const maxCharLength = 56;
+  if (str.length > maxCharLength) {
+    return str.substring(0, maxCharLength) + '...';
+  }
+  return str;
+}
+
+// default empty state
+document.getElementById('empty').innerHTML = "<h1>Select an element for results</h1>";
+
+// show the copy from the selection
+onmessage = (event) => {
+
+  // set variables
+  // have some defaults for data to avoid error when no element selected
+  let data = event.data.pluginMessage.selectedNode || { type: "NONE", items: [] };
+  let keyCopyArr = data.items || [];
+  let keyCopyHTML = "";
+
+  // loop through the array of keys/copy
+  // add them all together to inject
+  for (let i = 0; i < keyCopyArr.length; i++) {
+    keyCopyHTML += `<p class="num"><span class="text-icon">T</span>${i + 1}</p><p class="label label-border">Name</p><p><strong>${keyCopyArr[i].name}</strong></p><p class="label label-border">Copy</p><p><em>${truncateCopy(keyCopyArr[i].copy)}</em></p>`;
+  }
+
+  // show or hide empty state
+  if (data.type !== "NONE") {
+    document.getElementById('empty').innerHTML = "";
+  } else {
+    document.getElementById('empty').innerHTML = "<h1>Select an element for results</h1>";  
+  }
+
+  // inject HTML based on results
+  document.getElementById('node_type').innerHTML = data.type;
+  document.getElementById('keys').innerHTML = keyCopyHTML;
+
+}
+
+// send code what user has entered in the "Includes" field
+document.getElementById('includes').onkeyup = () => {
+   parent.postMessage({ pluginMessage: { 
+     type: 'includes',
+     include: document.getElementById('includes').value
+    } }, '*')
+}
+
+// parent.postMessage({ pluginMessage: { type: 'getMetaData' } }, '*')
+
+</script>
+
+<style type="text/css">
+
+  /* Settings */
+
+  :root {
+    --color__white: #FFFFFF;
+    --color__black: #000000;
+    --color__gray: #5F5F5F;
+    --color__light-gray: #9F9F9F;
+    --color__x-light-gray: #E5E5E5;
+    --color__charcoal: #1F1F1F;
+    --color__blue: #006ABE;
+
+    --gutter__base: 8px;
+    --gutter__small: 16px;
+    --gutter__medium: 40px;
+    --gutter__large: 56px;
+
+    --font__sans: "Open Sans", "Roboto", sans-serif;
+    --font__serif: "PT Serif", "Georgia", serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    padding: 0;
+    margin: 0;
+    background-color: var(--color__white);
+
+    font-family: var(--font__sans);
+    color: var(--color__charcoal);
+  }
+
+
+
+  /* Typography */
+
+  h1 {
+    font-family: var(--font__serif);
+    font-size: 15px;
+    color: var(--color__light-gray);
+    text-align: center;
+    font-style: italic;
+    font-weight: 300;
+
+    padding: var(--gutter__small) 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  h3 {
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+    margin: 0;
+    padding: 0;
+  }
+
+  p {
+    font-size: 13px;
+    margin: 0;
+    padding: var(--gutter__base) var(--gutter__small);
+  }
+
+
+
+  /* Layouts */
+
+  .keys { margin: 24px 0 0; }
+
+  .table {
+    display: grid;
+    width: 100%;
+    align-items: stretch;
+    grid-template-columns: 80px auto;
+  }
+  .table p {
+    border-bottom: 1px solid var(--color__x-light-gray);
+  }
+  .full {
+    grid-column: span 2;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color__x-light-gray);
+  }
+
+  .title {
+    background: var(--color__white);
+    padding: 4px 16px 8px;
+    align-items: center;
+  }
+
+  .num {
+    background: #F0F0F0;
+    border-right: 1px solid var(--color__x-light-gray);
+    align-self: stretch;
+    grid-column: span 2;
+    padding: 3px var(--gutter__small);
+    font-size: 11px;
+  }
+  .num .text-icon {
+    float: right;
+    font-family: var(--font__serif);
+    color: var(--color__light-gray);
+  }
+
+  .node_type {
+    width: 75%;
+  }
+
+
+
+  /* Forms */
+
+  .form {
+    padding: 0;
+    margin: 0;
+  }
+
+  .form input[type="text"] {
+    margin: 0;
+    padding: var(--gutter__base);
+    font-size: 13px;
+    width: 72%;
+    border: none;
+    background: var(--color__white);
+  }
+
+  .title select {
+    background: none;
+    border: none;
+    font-size: 13px;
+  }
+
+  .label {
+    font-size: 12px;
+    color: var(--color__gray);
+  }
+  .label-border {
+    border-right: 1px solid var(--color__x-light-gray);
+  }
+
+</style>

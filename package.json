@@ -1,0 +1,14 @@
+{
+  "name": "inspect-metadata",
+  "version": "1.0.0",
+  "description": "View and save metadata to Figma nodes",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.19.2"
+  }
+}
